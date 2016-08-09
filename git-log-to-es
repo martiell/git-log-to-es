@@ -1,12 +1,15 @@
 #!/usr/bin/env python
+from gitlog import GitLog
 from importer import Importer
 from parser import LogParser
 from sys import stdin
 
 def main():
-    importer = Importer()
-    parser = LogParser(stdin)
-    parser.readCommits(importer)
+    file = GitLog().log()
+    with file:
+        importer = Importer()
+        parser = LogParser(file)
+        parser.readCommits(importer)
 
 if __name__ == "__main__":
     main()
