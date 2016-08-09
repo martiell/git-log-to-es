@@ -51,7 +51,7 @@ class LogParser:
             if splits[1] != '-':
                 dels += int(splits[1])
             line = self.readline()
-        print(adds - dels)
+        return adds - dels
 
     def readCommit(self):
         hash = self.readSHA()
@@ -64,24 +64,29 @@ class LogParser:
         author = self.readAction(line)
         line = self.readline()
         committer = self.readAction(line)
-        print(hash)
-        print(parents)
-        print(author)
-        print(committer)
         message = ''
         self.readline()
         line = self.readline()
         while line:
-            message += line[4:]
+            message += line[4:] + '\n'
             line = self.readline()
-        print(message)
+        commit = {
+            'hash': hash,
+            'parents': parents,
+            'author': author,
+            'committer': committer,
+            'message': message
+        }
         if self.lookahead.find('\t') >= 0:
-            self.readDelta()
+            commit['delta'] = self.readDelta()
+        return commit
 
-    def readCommits(self):
-        self.readCommit()
+    def readCommits(self, importer):
+        commit = self.readCommit()
+        importer.commit(commit)
         while self.lookahead:
-            self.readCommit()
+            commit = self.readCommit()
+            importer.commit(commit)
 
 
 class GitOffset(tzinfo):

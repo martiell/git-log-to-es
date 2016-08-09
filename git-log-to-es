@@ -1,10 +1,12 @@
 #!/usr/bin/env python
+from importer import Importer
 from parser import LogParser
 from sys import stdin
 
 def main():
+    importer = Importer()
     parser = LogParser(stdin)
-    parser.readCommits()
+    parser.readCommits(importer)
 
 if __name__ == "__main__":
     main()
